@@ -1004,12 +1004,24 @@ namespace UnrealBinaryBuilder
 					GetConditionalString(bWithHTML5.IsChecked));
 				}
 
-				if (SupportConsoles)
+				if ((bool)bWithSwitch.IsChecked)
 				{
-					CommandLineArgs += string.Format(" -set:WithSwitch={0} -set:WithPS4={1} -set:WithXboxOne={2}",
-					GetConditionalString(bWithSwitch.IsChecked),
-					GetConditionalString(bWithPS4.IsChecked),
-					GetConditionalString(bWithXboxOne.IsChecked));
+					CommandLineArgs += string.Format(" -set:WithSwitch={0}", GetConditionalString(bWithSwitch.IsChecked));
+				}
+
+				if ((bool)bWithPS4.IsChecked)
+				{
+					CommandLineArgs += string.Format(" -set:WithPS4={0}", GetConditionalString(bWithPS4.IsChecked));
+				}
+
+				if ((bool)bWithPS5.IsChecked)
+				{
+					CommandLineArgs += string.Format(" -set:WithPS5={0}", GetConditionalString(bWithPS5.IsChecked));
+				}
+
+				if ((bool)bWithXboxOne.IsChecked)
+				{
+					CommandLineArgs += string.Format(" -set:WithXboxOne={0}", GetConditionalString(bWithXboxOne.IsChecked));
 				}
 
 				if (SupportLinuxArm64)
@@ -1165,16 +1177,6 @@ namespace UnrealBinaryBuilder
 				}
 			}
 
-			if (SupportConsoles == false && (bWithSwitch.IsChecked == true || bWithPS4.IsChecked == true || bWithXboxOne.IsChecked == true))
-			{
-				GameAnalyticsCSharp.AddDesignEvent($"Build:Console:IncorrectEngine:{GetEngineName()}");
-				bWithSwitch.IsChecked = bWithPS4.IsChecked = bWithXboxOne.IsChecked = false;
-				if (SettingsJSON.bShowConsoleDeprecatedMessage)
-				{
-					HandyControl.Controls.MessageBox.Show("Console support was removed from Unreal Engine 4.25 and higher. You had it enabled but since it is of no use, it is disabled.");
-				}
-			}
-
 			bool bContinueToBuild = true;
 			if (SettingsJSON.bEnableEngineBuildConfirmationMessage)
 			{
@@ -1245,8 +1247,6 @@ namespace UnrealBinaryBuilder
 		public bool SupportLinuxAArch64 => IsUnrealEngine4() && GetEngineValue() >= 4.24;
 
 		public bool SupportLinuxArm64 => IsUnrealEngine4() == false;
-
-		public bool SupportConsoles => GetEngineValue() <= 4.24;
 
 		public bool SupportVisualStudio2019 => IsUnrealEngine4() && IsEngineSelection425OrAbove;
 
